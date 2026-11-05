@@ -16,7 +16,7 @@ class Game_2048():
     __MIN_SIZE = 2
     __MAX_SIZE = 5
     __Highest_Score = 0
-    fail = False
+    
 #Mapsize merupakan ukuran grid node yaitu 4x4,
 # Target merupakan target score yang mau dicapai
     def __init__(self,MapSize:int,Target:int):

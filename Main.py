@@ -16,7 +16,7 @@ class Game_2048():
     __MIN_SIZE = 2
     __MAX_SIZE = 5
     __Highest_Score = 0
-    
+    # fail = False
 #Mapsize merupakan ukuran grid node yaitu 4x4,
 # Target merupakan target score yang mau dicapai
     def __init__(self,MapSize:int,Target:int):
@@ -373,8 +373,8 @@ class Game_2048():
                 self.Update(self.Grid_Node[row][columns],self.Label_Grid[row][columns])
 
                 # Memperbarui capaian skor permainan
-                if (self.__Highest_Score < self.Grid_Node[row][column]):
-                    self.__Highest_Score = self.Grid_Node[row][column];
+                if (self.__Highest_Score < self.Grid_Node[row][columns]):
+                    self.__Highest_Score = self.Grid_Node[row][columns];
                 # jika pada suatu perulangan terdapat node yang kosong pada posisi tertentu maka ditambahkan
                 # sebagai list calon penempatan node random setelah pergerakan user
                 if (self.Grid_Node[row][columns] == 0):

@@ -1,4 +1,4 @@
-#  Creator: Fajar Sudarta
+# Creator: Fajar Sudarta (void)
 
 from tkinter import Tk,Frame,Label,Event,messagebox,Button,filedialog
 import random,os,csv
@@ -9,13 +9,25 @@ class Game_2048():
     last_spawnnode :list = [0,0]
     Win : bool = False
     Move_bool : bool = True
-    Last_Grid = []
+    Last_Grid : list = []
     __list_empty_node : list = []
     __debug : bool = False;
-    check_key = {"w":True,"a":True,"s":True,"d":True}
-    __MIN_SIZE = 2
-    __MAX_SIZE = 5
+    check_key : dict = {"w":True,"a":True,"s":True,"d":True}
+    __MIN_SIZE : int = 2
+    __MAX_SIZE : int = 5
     __Highest_Score = 0
+    __key_translation : dict = {
+        87:"w",
+        65:"a",
+        83:"s",
+        68:"d",
+
+        38:"w",
+        37:"a",
+        40:"s",
+        39:"d",
+
+    }
     # fail = False
 #Mapsize merupakan ukuran grid node yaitu 4x4,
 # Target merupakan target score yang mau dicapai
@@ -24,19 +36,19 @@ class Game_2048():
         os.system("cls")
         self.Window = Tk()
         self.Window.title("2048")
-        self.GridFrame = Frame(self.Window)
-        self.ButtonFrame = Frame(self.Window)
+        self.GridFrame : Frame = Frame(self.Window)
+        self.ButtonFrame : Frame = Frame(self.Window)
         # Inisialiasi Button
-        self.Undo_Button = Button(self.ButtonFrame,text="Undo",command=self.Undo_Func,font=(12))
-        self.Save_Button = Button(self.ButtonFrame,text="Save",font=(12),command=self.Save_Func)
-        self.Load_Button = Button(self.ButtonFrame,text="Load",font=(12),command=self.Load_Func)
-        self.Reset_Button = Button(self.ButtonFrame,text="Reset",font=(12),command=self.ask_Reset)
-        self.Tutor_Button = Button(self.ButtonFrame,text="Tutor",font=(12),command=self.Tutor_Func)
-        self.GridSize = MapSize
-        self.TargetValue = Target
+        self.Undo_Button : Button = Button(self.ButtonFrame,text="Undo",command=self.Undo_Func,font=(12))
+        self.Save_Button  : Button = Button(self.ButtonFrame,text="Save",font=(12),command=self.Save_Func)
+        self.Load_Button  : Button = Button(self.ButtonFrame,text="Load",font=(12),command=self.Load_Func)
+        self.Reset_Button : Button = Button(self.ButtonFrame,text="Reset",font=(12),command=self.ask_Reset)
+        self.Tutor_Button : Button = Button(self.ButtonFrame,text="Tutor",font=(12),command=self.Tutor_Func)
+        self.GridSize : int = MapSize
+        self.TargetValue : int = Target
 
         #generate map 2048
-        print(MapSize)
+        # print(MapSize)
         if(MapSize < self.__MIN_SIZE or MapSize > self.__MAX_SIZE):
             print("Error")
             messagebox.showwarning(title="warning: melibihi aturan",message=f"Ukuran map telah melebihi batas ataupun telah keluar dari batas minimal\nMinimal ukuran: 2x2\nMaksimal Ukuran: 5\n ukuran yang dinput: {MapSize}")
@@ -127,15 +139,15 @@ class Game_2048():
     # Mekanisme move function akan selau mengecek apakah semua key bernilai false jika iya maka player
     #  dinyatakan kalah dalam perrmainan karna player yang membuat dirinya  sendiri stuck dalam permainan
     def Move(self,event:Event):
-        # #print(self.Move)
         # mekanisme untuk mencegah callback function dipanggil dua kali sebelum function move selesai diproses
         if not self.Move_bool:
             return
-
         self.Move_bool = False
-
         try:
-            key = event.keysym
+            # print(event.keycode)\
+            # berfungsi sebagai layer translasi kunci mengubah kode tombol keyboard menjadi
+            #  karakter tombol yang dipahami oleh proses sistem selanjutnya
+            key = self.__key_translation.get(event.keycode)
 
             if key not in self.check_key:
                 return
@@ -188,9 +200,9 @@ class Game_2048():
 
                 # jika semua status dari tombol WASD semuanya false maka game over
                 if not any(self.check_key.values()):
-                    print(self.check_key)
+                    # print(self.check_key)
                     self.Game_Over()
-            print(self.check_key)
+            # print(self.check_key)
 
         finally:
             self.Move_bool = True
@@ -224,7 +236,7 @@ class Game_2048():
         # inisialisai node hanya akan mengambil yang ada isi nilai nya saja
         #  semisal list:[2,2,0,2] ke arah kiri
         # maka new = [2,2,2]
-        # Proses penggaabungan: new = [4,2]
+        # Proses penggabungan: new = [4,2]
         # Penambahan nilai 0: new = [4,2,0,0]
         new = [tile for tile in row if tile != 0]
         if(len(new) == 0):

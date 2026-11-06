@@ -59,7 +59,7 @@ Sesuaikan bagian ini dengan input keyboard yang diimplementasikan pada aplikasi.
 | Arah keyboard / WASD / Arrow key | Menggeser kotak |
 
 ## Screenshot
-
+![2048 Game](assets/preview.png)
 
 
 ## Referensi

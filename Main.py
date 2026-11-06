@@ -14,7 +14,7 @@ class Game_2048():
     __debug : bool = False;
     check_key : dict = {"w":True,"a":True,"s":True,"d":True}
     __MIN_SIZE : int = 2
-    __MAX_SIZE : int = 5
+    __MAX_SIZE : int = 10
     __Highest_Score = 0
     __key_translation : dict = {
         87:"w",
@@ -26,9 +26,18 @@ class Game_2048():
         37:"a",
         40:"s",
         39:"d",
-
     }
-    # fail = False
+    __node_size_configure : dict = {
+        2 : (12,6),
+        3 : (12,6),
+        4 : (10,5),
+        5 : (10,5),
+        6 : (8,4),
+        7 : (8,4),
+        8 : (6,3),
+        9 : (6,3),
+        10 : (6,3),
+    }
 #Mapsize merupakan ukuran grid node yaitu 4x4,
 # Target merupakan target score yang mau dicapai
     def __init__(self,MapSize:int,Target:int):
@@ -50,10 +59,11 @@ class Game_2048():
         #generate map 2048
         # print(MapSize)
         if(MapSize < self.__MIN_SIZE or MapSize > self.__MAX_SIZE):
-            print("Error")
-            messagebox.showwarning(title="warning: melibihi aturan",message=f"Ukuran map telah melebihi batas ataupun telah keluar dari batas minimal\nMinimal ukuran: 2x2\nMaksimal Ukuran: 5\n ukuran yang dinput: {MapSize}")
+            messagebox.showwarning(title="warning: melibihi aturan",message=f"Ukuran map telah melebihi batas ataupun telah keluar dari batas minimal\nMinimal ukuran: {self.__MIN_SIZE}x{self.__MIN_SIZE}\nMaksimal Ukuran: {self.__MAX_SIZE}x{self.__MAX_SIZE}\n ukuran yang dinput: {MapSize}")
             self.Window.destroy()
-        self.Label_Grid,self.Grid_Node = self.GenerateGrid(self.GridSize,12,6)
+            return
+        node_width, node_height = self.__node_size_configure.get(MapSize)
+        self.Label_Grid,self.Grid_Node = self.GenerateGrid(self.GridSize,node_width,node_height)
         # self.Label_Grid adalah array 2 dimensi yang menyimpan widget atau objek node yang menjadi tampilan di Aplikasi
         # sedangkan self.Grid_Node merupakan data asli dari sesi permainan yang bertipe data interger 2 dimensi
 
@@ -73,7 +83,6 @@ class Game_2048():
         self.Spawn_Node(2)
         self.Spawn_Node(2)
 
-       
         self.Window.mainloop()
 
     def Tutor_Func(self):
@@ -138,7 +147,6 @@ class Game_2048():
             return
         self.Move_bool = False
         try:
-            # print(event.keycode)\
             # berfungsi sebagai layer translasi kunci mengubah kode tombol keyboard menjadi
             #  karakter tombol yang dipahami oleh proses sistem selanjutnya
             key = self.__key_translation.get(event.keycode)
@@ -194,9 +202,7 @@ class Game_2048():
 
                 # jika semua status dari tombol WASD semuanya false maka game over
                 if not any(self.check_key.values()):
-                    # print(self.check_key)
                     self.Game_Over()
-            # print(self.check_key)
 
         finally:
             self.Move_bool = True
@@ -301,7 +307,7 @@ class Game_2048():
             rows = len(grid)
             cols = len(grid[0]) if rows > 0 else 0
 
-            print(f"Rows: {rows}, Columns: {cols}")
+            # print(f"Rows: {rows}, Columns: {cols}")
 
             # Validasi ukuran grid
             if rows != self.GridSize or cols != self.GridSize:
@@ -421,4 +427,10 @@ class Game_2048():
 
 # Eksekusi kode dimulai dari sini
 if __name__ == "__main__":
-    Game_2048(4,2048)
+    inputuser = input("Masukkan ukuran map (angka saja, jika input kosong, maka default 4x4): ")
+    try:
+        if inputuser == "":
+            inputuser = 4
+        Game_2048(int(inputuser),2048)
+    except:
+        print("Input Invalid")

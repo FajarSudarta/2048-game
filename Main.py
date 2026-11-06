@@ -73,13 +73,7 @@ class Game_2048():
         self.Spawn_Node(2)
         self.Spawn_Node(2)
 
-        # self.Spawn_Node(1024)
-        # self.Spawn_Node(1024)
-        # self.Custom_Spawn(2,0,0)
-        # self.Custom_Spawn(2,0,1)
-        # self.Custom_Spawn(2,0,2)
-        # self.Custom_Spawn(2,0,3)
-
+       
         self.Window.mainloop()
 
     def Tutor_Func(self):

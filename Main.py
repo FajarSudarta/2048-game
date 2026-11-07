@@ -2,10 +2,13 @@
 
 from tkinter import Tk,Frame,Label,Event,messagebox,Button,filedialog
 import random,os,csv
+import winsound
+
 
 
 class Game_2048():
 
+    __kesempatan_gerak = 30
     last_spawnnode :list = [0,0]
     Win : bool = False
     Move_bool : bool = True
@@ -27,6 +30,7 @@ class Game_2048():
         40:"s",
         39:"d",
     }
+    # Tabel hashmap untuk menyesuaikan ukuran kotak label / node untuk setiap ukuran map
     __node_size_configure : dict = {
         2 : (12,6),
         3 : (12,6),
@@ -47,6 +51,7 @@ class Game_2048():
         self.Window.title("2048")
         self.GridFrame : Frame = Frame(self.Window)
         self.ButtonFrame : Frame = Frame(self.Window)
+        self.Kesempatan_gerak_label = Label(self.Window,text=f"Kesempatan Gerak: {self.__kesempatan_gerak}",font=("arial",12,"bold"))
         # Inisialiasi Button
         self.Undo_Button : Button = Button(self.ButtonFrame,text="Undo",command=self.Undo_Func,font=(12))
         self.Save_Button  : Button = Button(self.ButtonFrame,text="Save",font=(12),command=self.Save_Func)
@@ -57,7 +62,6 @@ class Game_2048():
         self.TargetValue : int = Target
 
         #generate map 2048
-        # print(MapSize)
         if(MapSize < self.__MIN_SIZE or MapSize > self.__MAX_SIZE):
             messagebox.showwarning(title="warning: melibihi aturan",message=f"Ukuran map telah melebihi batas ataupun telah keluar dari batas minimal\nMinimal ukuran: {self.__MIN_SIZE}x{self.__MIN_SIZE}\nMaksimal Ukuran: {self.__MAX_SIZE}x{self.__MAX_SIZE}\n ukuran yang dinput: {MapSize}")
             self.Window.destroy()
@@ -68,6 +72,7 @@ class Game_2048():
         # sedangkan self.Grid_Node merupakan data asli dari sesi permainan yang bertipe data interger 2 dimensi
 
       # meletakkan objek ke aplikasi langsung
+        self.Kesempatan_gerak_label.pack(side="bottom")
         self.GridFrame.pack(side="left")
         self.ButtonFrame.pack(side="right",anchor="n")
         self.Undo_Button.pack(fill="x")
@@ -156,8 +161,14 @@ class Game_2048():
             # mengecek Apakah key yang dipencet sama dengan false
             # jika iya maka tombol akan terkunci dan tidak bisa membuat pergerakan. untuk mencegah "Un-neccesary process"
             if not self.check_key[key]:
-                # lalu mengecek ke semua kunci apakah false, maka game over
-                if not any(self.check_key.values()):
+                # kesempatan dalam bergerak berkurang 1 ketika player melakukan pergerakan yang tidak membuat
+                self.update_label_kesempatan_gerak(-1)
+                # Memutar suara Windows Exclamation / Warning asli
+                winsound.MessageBeep(winsound.MB_ICONEXCLAMATION)
+                # print(self.__kesempatan_gerak)
+
+                # lalu mengecek ke semua kunci apakah false atau kesempatan bergeraknya berkurang, maka game over
+                if not any(self.check_key.values()) or self.__kesempatan_gerak <= 0:
                     self.Game_Over()
                 return
             # ini adalah mekanis dalam undo menyimpan data sebelumnya sebenarnya hanya menyimpan data 1 langkah sebelumnya
@@ -206,6 +217,7 @@ class Game_2048():
 
         finally:
             self.Move_bool = True
+
 
 
     def Move_up(self):
@@ -377,6 +389,11 @@ class Game_2048():
 # Update grid pada dasarnya fungsi ini melakukan update tampilan dari informasi nilai yang sebenarnya.
 # data permainan disimpan secara terrpisah dari sebagai array multi dimensi dan objek gui yaitu label sebagai tampilan yang menyamai dari data game internal
 # fungsi akan looping tiap node pada array 2 dimensi
+
+    def update_label_kesempatan_gerak(self,m:int):
+        self.__kesempatan_gerak += m
+        self.Kesempatan_gerak_label.config(text=f"Kesempatan Gerak: {self.__kesempatan_gerak}",font=("arial",12,"bold"))
+
     def Update_Grid(self):
         self.__list_empty_node = []
         for row in range(self.GridSize):
@@ -432,5 +449,5 @@ if __name__ == "__main__":
         if inputuser == "":
             inputuser = 4
         Game_2048(int(inputuser),2048)
-    except:
-        print("Input Invalid")
+    except Exception as e:
+        print("Input Invalid",e)
